@@ -1,0 +1,22 @@
+{
+  "name": "discord_dev_bot",
+  "version": "1.0.0",
+  "description": "Discord Bot that links to developer applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dellinger/DiscordDevBot.git"
+  },
+  "author": "David Ellinger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dellinger/DiscordDevBot/issues"
+  },
+  "homepage": "https://github.com/dellinger/DiscordDevBot#readme",
+  "dependencies": {
+    "discord.js": "^5.3.2"
+  }
+}
