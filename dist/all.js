@@ -6,6 +6,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+require('dotenv').config();
+
 console.log("Hello World");
 
 var Test = function (_TestParent) {
@@ -17,7 +19,8 @@ var Test = function (_TestParent) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Test).call(this));
 
         _this.doSomething = function (withSomeData) {
-            console.log("Doing something with " + withSomeData);
+            console.log("Doing something with " + withSomeData + " ");
+            print(withSomeData);
         };
 
         _this.someField = someField;
@@ -26,4 +29,19 @@ var Test = function (_TestParent) {
 
     return Test;
 }(TestParent);
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Created by David on 1/28/2016.
+ */
+
+var TestParent = function TestParent() {
+    _classCallCheck(this, TestParent);
+
+    this.print = function (something) {
+        console.log("" + something);
+    };
+};
 //# sourceMappingURL=all.js.map

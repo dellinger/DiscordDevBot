@@ -1,15 +1,16 @@
+require('dotenv').config();
+
 console.log("Hello World");
 
-class Test extends TestParent{
+class Test extends TestParent {
 
     constructor(someField) {
-      super();
-      this.someField = someField;
+        super();
+        this.someField = someField;
     }
 
-    doSomething = (withSomeData) => {
-        console.log(`Doing something with ${withSomeData}`);
+    doSomething = withSomeData => {
+        console.log(`Doing something with ${withSomeData} `);
+        print(withSomeData);
     };
-
-
 }
