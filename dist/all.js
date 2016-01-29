@@ -7,6 +7,42 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 require('dotenv').config();
+
+var BasicActions = function BasicActions(bot) {
+    var _this = this;
+
+    _classCallCheck(this, BasicActions);
+
+    this.pong = function (message) {
+        _this.bot.reply(message, "pong");
+    };
+
+    this.listChannels = function (message) {
+        var channels = _this.bot.channels.map(function (channel) {
+            return channel.name;
+        });
+        _this.bot.sendMessage(channels);
+    };
+
+    this.roll = function (message) {
+        console.log(message);
+        var val = Math.floor(Math.random() * 10) + 1;
+        _this.bot.reply(message, "Rolled a " + val);
+    };
+
+    this.bot = bot;
+};
+
+exports.default = BasicActions;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+require('dotenv').config();
 var Discord = require("discord.js");
 
 var DiscordBot = function DiscordBot() {
@@ -14,23 +50,29 @@ var DiscordBot = function DiscordBot() {
 
     _classCallCheck(this, DiscordBot);
 
+    this.supportedActions = {};
+
     this.initialize = function () {
         _this.bot.on("ready", function () {
             console.log("Discord bot is ready!");
-            _this.listChannels();
         });
 
         _this.bot.on("disconnected", function () {
             console.error("Discord bot disconnected :( ");
+            process.exit(1);
         });
 
         _this.bot.on("message", function (message) {
-            if (message.content === "ping") {
-                _this.bot.reply(message, "pong");
+            if (_this.isSupportedAction(message)) {
+                _this.supportedActions[message](message);
             }
         });
 
         _this.authenticateBot();
+    };
+
+    this.isSupportedAction = function (message) {
+        return _this.supportedActions[message] ? true : false;
     };
 
     this.authenticateBot = function () {
@@ -43,11 +85,16 @@ var DiscordBot = function DiscordBot() {
         _this.bot.login(username, password);
     };
 
-    this.listChannels = function () {
-        console.log("User is subscribed to these channels: " + _this.bot.channels + " ");
+    this.listCommands = function () {
+        _this.bot.sendMessage("This bot recognizes the following commands\n                              " + Object.keys(_this.supportedActions));
     };
 
     this.bot = new Discord.Client();
+    this.basicActions = new BasicActions(this.bot);
+    this.supportedActions["ping"] = this.basicActions.pong;
+    this.supportedActions["roll"] = this.basicActions.roll;
+    this.supportedActions["listchannels"] = this.basicActions.listChannels();
+    this.supportedActions["listCommands"] = this.listCommands();
 };
 
 exports.default = DiscordBot;
