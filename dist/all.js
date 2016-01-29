@@ -1,47 +1,52 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 require('dotenv').config();
+var Discord = require("discord.js");
 
-console.log("Hello World");
+var DiscordBot = function DiscordBot() {
+    var _this = this;
 
-var Test = function (_TestParent) {
-    _inherits(Test, _TestParent);
+    _classCallCheck(this, DiscordBot);
 
-    function Test(someField) {
-        _classCallCheck(this, Test);
+    this.initialize = function () {
+        _this.bot.on("ready", function () {
+            console.log("Discord bot is ready!");
+        });
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Test).call(this));
+        _this.bot.on("disconnected", function () {
+            console.error("Discord bot disconnected :( ");
+        });
 
-        _this.doSomething = function (withSomeData) {
-            console.log("Doing something with " + withSomeData + " ");
-            print(withSomeData);
-        };
+        _this.bot.on("message", function (message) {
+            if (message.content === "ping") {
+                _this.bot.reply(message, "pong");
+            }
+        });
 
-        _this.someField = someField;
-        return _this;
-    }
+        _this.authenticateBot();
+    };
 
-    return Test;
-}(TestParent);
+    this.authenticateBot = function () {
+        var username = process.env.DISCORD_USERNAME;
+        var password = process.env.DISCORD_PASSWORD;
+        if (!username || !password) {
+            throw new Error("Username and Password for the discord account must be supplied in a .env file");
+        }
+        _this.bot.login(username, password);
+    };
+
+    this.bot = new Discord.Client();
+};
+
+exports.default = DiscordBot;
 "use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Created by David on 1/28/2016.
- */
-
-var TestParent = function TestParent() {
-    _classCallCheck(this, TestParent);
-
-    this.print = function (something) {
-        console.log("" + something);
-    };
-};
+var bot = new DiscordBot();
+bot.initialize();
 //# sourceMappingURL=all.js.map

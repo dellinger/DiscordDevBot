@@ -1,16 +1,5 @@
-require('dotenv').config();
 
-console.log("Hello World");
 
-class Test extends TestParent {
+var bot = new DiscordBot();
+bot.initialize();
 
-    constructor(someField) {
-        super();
-        this.someField = someField;
-    }
-
-    doSomething = withSomeData => {
-        console.log(`Doing something with ${withSomeData} `);
-        print(withSomeData);
-    };
-}

@@ -2,8 +2,9 @@
   "name": "discord_dev_bot",
   "version": "1.0.0",
   "description": "Discord Bot that links to developer applications",
-  "main": "index.js",
+  "main": "dist/all.js",
   "scripts": {
+    "start": "node dist/all.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

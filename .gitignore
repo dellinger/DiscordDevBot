@@ -36,6 +36,7 @@ node_modules
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
+/dist/.env
 .idea/dictionaries
 
 ## Plugin-specific files:
