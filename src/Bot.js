@@ -8,10 +8,10 @@ export default class DiscordBot {
     constructor() {
         this.bot = new Discord.Client();
         this.basicActions = new BasicActions(this.bot);
-        this.supportedActions["ping"] = this.basicActions.pong;
-        this.supportedActions["roll"] = this.basicActions.roll;
-        this.supportedActions["listchannels"] = this.basicActions.listChannels();
-        this.supportedActions["listCommands"] = this.listCommands();
+        this.supportedActions["!help"] = this.listCommands;
+        this.supportedActions["!listChannels"] = this.basicActions.listChannels;
+        this.supportedActions["!ping"] = this.basicActions.pong;
+        this.supportedActions["!roll"] = this.basicActions.roll;
     };
 
     initialize = () => {
@@ -33,7 +33,13 @@ export default class DiscordBot {
         this.authenticateBot();
     };
 
+    listCommands = () => {
+        this.bot.sendMessage(`This bot recognizes the following commands
+                              ${Object.keys(this.supportedActions)}`);
+    };
+
     isSupportedAction = (message) => {
+        console.log(`${message} is a supported action: ${this.supportedActions[message] ? true : false}`)
         return (this.supportedActions[message] ? true : false);
     };
 
@@ -46,11 +52,4 @@ export default class DiscordBot {
         console.info(`Authenticating with user ${username}`);
         this.bot.login(username, password);
     };
-
-    listCommands = () => {
-        this.bot.sendMessage(`This bot recognizes the following commands
-                              ${Object.keys(this.supportedActions)}`);
-    };
-
-
 }

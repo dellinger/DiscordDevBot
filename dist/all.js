@@ -71,7 +71,12 @@ var DiscordBot = function DiscordBot() {
         _this.authenticateBot();
     };
 
+    this.listCommands = function () {
+        _this.bot.sendMessage("This bot recognizes the following commands\n                              " + Object.keys(_this.supportedActions));
+    };
+
     this.isSupportedAction = function (message) {
+        console.log(message + " is a supported action: " + (_this.supportedActions[message] ? true : false));
         return _this.supportedActions[message] ? true : false;
     };
 
@@ -85,16 +90,12 @@ var DiscordBot = function DiscordBot() {
         _this.bot.login(username, password);
     };
 
-    this.listCommands = function () {
-        _this.bot.sendMessage("This bot recognizes the following commands\n                              " + Object.keys(_this.supportedActions));
-    };
-
     this.bot = new Discord.Client();
     this.basicActions = new BasicActions(this.bot);
-    this.supportedActions["ping"] = this.basicActions.pong;
-    this.supportedActions["roll"] = this.basicActions.roll;
-    this.supportedActions["listchannels"] = this.basicActions.listChannels();
-    this.supportedActions["listCommands"] = this.listCommands();
+    this.supportedActions["!help"] = this.listCommands;
+    this.supportedActions["!listChannels"] = this.basicActions.listChannels;
+    this.supportedActions["!ping"] = this.basicActions.pong;
+    this.supportedActions["!roll"] = this.basicActions.roll;
 };
 
 exports.default = DiscordBot;

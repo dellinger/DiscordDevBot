@@ -19,7 +19,7 @@ gulp.task("copy", function() {
     return gulp.src('.env').pipe(gulp.dest('dist'));
 });
 
-gulp.task("start", function(cb) {
+gulp.task("start",["default"], function(cb) {
   exec('node dist/all.js', function (err, stdout, stderr) {
     console.log(stdout);
     console.error(stderr);
