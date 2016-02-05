@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/dellinger/DiscordDevBot#readme",
   "dependencies": {
-    "discord.js": "^5.3.2",
+    "discord.js": "^6.0.0",
     "dotenv": "^2.0.0"
   },
   "devDependencies": {

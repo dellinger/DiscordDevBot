@@ -53,8 +53,11 @@ var DiscordBot = function DiscordBot() {
     this.supportedActions = {};
 
     this.initialize = function () {
+        _this.authenticateBot();
+
         _this.bot.on("ready", function () {
             console.log("Discord bot is ready!");
+            _this.supportedActions[_this.bot.user.toString()] = _this.listCommands();
         });
 
         _this.bot.on("disconnected", function () {
@@ -67,8 +70,6 @@ var DiscordBot = function DiscordBot() {
                 _this.supportedActions[message](message);
             }
         });
-
-        _this.authenticateBot();
     };
 
     this.listCommands = function () {

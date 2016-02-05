@@ -15,8 +15,11 @@ export default class DiscordBot {
     };
 
     initialize = () => {
+		this.authenticateBot();
+		
         this.bot.on("ready", () => {
             console.log("Discord bot is ready!");
+			this.supportedActions[this.bot.user.toString()] = this.listCommands();
         });
 
         this.bot.on("disconnected", () => {
@@ -29,8 +32,6 @@ export default class DiscordBot {
                 this.supportedActions[message](message);
             }
         });
-
-        this.authenticateBot();
     };
 
     listCommands = () => {
