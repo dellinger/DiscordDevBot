@@ -19,7 +19,8 @@ export default class DiscordBot {
 		
         this.bot.on("ready", () => {
             console.log("Discord bot is ready!");
-			this.supportedActions[this.bot.user.toString()] = this.listCommands();
+			this.supportedActions[`@${this.bot.user.username}`] = this.listCommands;
+            console.log(`Supported Actions: ${Object.keys(this.supportedActions)}`);
         });
 
         this.bot.on("disconnected", () => {
@@ -28,20 +29,22 @@ export default class DiscordBot {
         });
 
         this.bot.on("message", message => {
-            if(this.isSupportedAction(message)) {
-                this.supportedActions[message](message);
+            let potentialAction = message.cleanContent;
+            console.log(`Potential Action: ${potentialAction}`);
+            if(this.isSupportedAction(potentialAction)) {
+                let action = this.supportedActions[potentialAction];
+                action(message);
             }
         });
     };
 
-    listCommands = () => {
+    listCommands = (message) => {
         this.bot.sendMessage(`This bot recognizes the following commands
                               ${Object.keys(this.supportedActions)}`);
     };
 
     isSupportedAction = (message) => {
-        console.log(`${message} is a supported action: ${this.supportedActions[message] ? true : false}`)
-        return (this.supportedActions[message] ? true : false);
+        return this.supportedActions.hasOwnProperty(message);
     };
 
     authenticateBot = () => {

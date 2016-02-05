@@ -49,3 +49,4 @@ node_modules
 
 .idea/.name
 *.iml
+.idea/misc.xml

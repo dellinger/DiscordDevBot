@@ -57,7 +57,8 @@ var DiscordBot = function DiscordBot() {
 
         _this.bot.on("ready", function () {
             console.log("Discord bot is ready!");
-            _this.supportedActions[_this.bot.user.toString()] = _this.listCommands();
+            _this.supportedActions["@" + _this.bot.user.username] = _this.listCommands;
+            console.log("Supported Actions: " + Object.keys(_this.supportedActions));
         });
 
         _this.bot.on("disconnected", function () {
@@ -66,19 +67,21 @@ var DiscordBot = function DiscordBot() {
         });
 
         _this.bot.on("message", function (message) {
-            if (_this.isSupportedAction(message)) {
-                _this.supportedActions[message](message);
+            var potentialAction = message.cleanContent;
+            console.log("Potential Action: " + potentialAction);
+            if (_this.isSupportedAction(potentialAction)) {
+                var action = _this.supportedActions[potentialAction];
+                action(message);
             }
         });
     };
 
-    this.listCommands = function () {
+    this.listCommands = function (message) {
         _this.bot.sendMessage("This bot recognizes the following commands\n                              " + Object.keys(_this.supportedActions));
     };
 
     this.isSupportedAction = function (message) {
-        console.log(message + " is a supported action: " + (_this.supportedActions[message] ? true : false));
-        return _this.supportedActions[message] ? true : false;
+        return _this.supportedActions.hasOwnProperty(message);
     };
 
     this.authenticateBot = function () {
