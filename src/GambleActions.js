@@ -46,7 +46,7 @@ export default class GambleActions {
 	};
 
 	isNormalInteger(str) {
-		return /^\+?(0|[1-9]\d*)$/.test(str);
+		return /^\+?([1-9]\d*)$/.test(str);
 	}
 
 }
