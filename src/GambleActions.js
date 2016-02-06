@@ -29,7 +29,26 @@ export default class GambleActions {
 	};
 	
 	calculateWinner = (message) => {
-		this.bot.sendMessage(message.channel,`Congratulations! You are the winner! *PLACEHOLDER*`);
+
+		let highestRoll = 0; //user / roll
+		let highestUser = undefined;
+		let lowestRoll = this.betAmount; // start high to get to lowest
+		let lowestUser = undefined;
+		this.rolls.forEach((username) => {
+			if(this.rolls[username] > highestRoll) {
+				highestRoll = this.rolls[username];
+				highestUser = username;
+			}
+			if(this.rolls[username] < lowestRoll) {
+				lowestRoll = this.rolls[username];
+				lowestUser = username;
+			}
+		});
+		if(highestUser) {
+			this.bot.sendMessage(message.channel,`Congratulations! You are the winner! *PLACEHOLDER*`);
+		}
+
+
 	};
 	
 	
