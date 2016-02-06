@@ -3,8 +3,24 @@ var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
 var concat = require("gulp-concat");
 var exec = require('child_process').exec;
+var nodemon = require('gulp-nodemon');
 
-gulp.task("default", ["babel","copy"]);
+var nodemonOptions = {
+	script: 'dist/all.js',
+	ext: 'js',
+	env: { 'NODE_ENV': 'development' },
+	verbose: true,
+	ignore: ['node_modules/**'],
+	tasks: ['babel','copy'],
+	watch: ['src/*'],
+	callback: function (nodemon) {
+		nodemon.on('log', function (event) {
+			console.log(event.colour);
+		});
+	}
+};
+
+gulp.task("default", ["babel","copy","start"]);
 
 gulp.task("babel", function() {
   return gulp.src("src/**/*.js")
@@ -19,12 +35,10 @@ gulp.task("copy", function() {
     return gulp.src('.env').pipe(gulp.dest('dist'));
 });
 
-gulp.task("start",["default"], function(cb) {
-  exec('node dist/all.js', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.error(stderr);
-    cb(err);
-  });
+gulp.task('start', function () {
+	nodemon(nodemonOptions)
+		.on('restart', function () {
+			console.log('restarted!')
+		});
 });
-
 
