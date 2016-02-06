@@ -8,10 +8,11 @@ export default class DiscordBot {
     constructor() {
         this.bot = new Discord.Client();
         this.basicActions = new BasicActions(this.bot);
+		this.gambleActions = new GambleActions(this.bot);
         this.supportedActions["!help"] = this.listCommands;
         this.supportedActions["!listChannels"] = this.basicActions.listChannels;
         this.supportedActions["!ping"] = this.basicActions.pong;
-        this.supportedActions["!roll"] = this.basicActions.roll;
+        this.supportedActions["!roll"] = this.gambleActions.roll;
     };
 
     initialize = () => {
@@ -29,7 +30,8 @@ export default class DiscordBot {
         });
 
         this.bot.on("message", message => {
-            let potentialAction = message.cleanContent;
+			let messageArray = message.cleanContent.split(" ");
+            let potentialAction = messageArray[0];
             console.log(`Potential Action: ${potentialAction}`);
             if(this.isSupportedAction(potentialAction)) {
                 let action = this.supportedActions[potentialAction];

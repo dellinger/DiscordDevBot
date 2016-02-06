@@ -24,12 +24,6 @@ var BasicActions = function BasicActions(bot) {
         _this.bot.sendMessage(channels);
     };
 
-    this.roll = function (message) {
-        console.log(message);
-        var val = Math.floor(Math.random() * 10) + 1;
-        _this.bot.reply(message, "Rolled a " + val);
-    };
-
     this.bot = bot;
 };
 
@@ -67,7 +61,8 @@ var DiscordBot = function DiscordBot() {
         });
 
         _this.bot.on("message", function (message) {
-            var potentialAction = message.cleanContent;
+            var messageArray = message.cleanContent.split(" ");
+            var potentialAction = messageArray[0];
             console.log("Potential Action: " + potentialAction);
             if (_this.isSupportedAction(potentialAction)) {
                 var action = _this.supportedActions[potentialAction];
@@ -96,13 +91,40 @@ var DiscordBot = function DiscordBot() {
 
     this.bot = new Discord.Client();
     this.basicActions = new BasicActions(this.bot);
+    this.gambleActions = new GambleActions(this.bot);
     this.supportedActions["!help"] = this.listCommands;
     this.supportedActions["!listChannels"] = this.basicActions.listChannels;
     this.supportedActions["!ping"] = this.basicActions.pong;
-    this.supportedActions["!roll"] = this.basicActions.roll;
+    this.supportedActions["!roll"] = this.gambleActions.roll;
 };
 
 exports.default = DiscordBot;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+require('dotenv').config();
+
+var GambleActions = function GambleActions(bot) {
+	var _this = this;
+
+	_classCallCheck(this, GambleActions);
+
+	this.roll = function (message) {
+		//  break apart message
+		console.log(message);
+		var val = Math.floor(Math.random() * 10) + 1;
+		_this.bot.reply(message, 'Rolled a ' + val);
+	};
+
+	this.bot = bot;
+};
+
+exports.default = GambleActions;
 "use strict";
 
 var bot = new DiscordBot();

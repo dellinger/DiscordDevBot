@@ -17,11 +17,4 @@ export default class BasicActions {
         this.bot.sendMessage(channels);
     };
 
-
-
-    roll = (message) => {
-        console.log(message);
-        let val = Math.floor(Math.random() * 10) + 1;
-        this.bot.reply(message,`Rolled a ${val}`);
-    };
 }
