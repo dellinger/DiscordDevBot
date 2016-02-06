@@ -41,7 +41,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 require('dotenv').config();
 var Discord = require("discord.js");
 
-var DiscordBot = function DiscordBot() {
+var DiscordBot = exports.DiscordBot = function DiscordBot() {
     var _this = this;
 
     _classCallCheck(this, DiscordBot);
@@ -101,9 +101,7 @@ var DiscordBot = function DiscordBot() {
     this.supportedActions["!gamble"] = this.gambleActions.initiateGame;
     this.supportedActions["!roll"] = this.gambleActions.roll;
 };
-
-exports.default = DiscordBot;
-'use strict';
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -114,7 +112,6 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 require('dotenv').config();
-var later = require('later');
 
 var GambleActions = function () {
 	function GambleActions(bot) {
@@ -128,28 +125,27 @@ var GambleActions = function () {
 					_this.betAmount = parseInt(args);
 					_this.gameStarted = true;
 				} else {
-					console.log('Need to enter a bet amount as an argument to initiate game');
+					console.log("Need to enter a bet amount as an argument to initiate game");
 				}
-				console.log('Bet Amount: ' + _this.betAmount);
+				console.log("Bet Amount: " + _this.betAmount);
 			}
-			var sched = { schedules: [{ s: [5] }] }; // 1 minute for now (hard coded)
 			setTimeout(function () {
 				console.log("Game has ended");
 				_this.gameStarted = false;
-				_this.bot.sendMessage('Time is up!');
+				_this.bot.sendMessage("Time is up!");
 				_this.calculateWinner(message);
 			}, 5000);
 		};
 
 		this.calculateWinner = function (message) {
-			_this.bot.sendMessage(message.channel, 'Congratulations! You are the winner! *PLACEHOLDER*');
+			_this.bot.sendMessage(message.channel, "Congratulations! You are the winner! *PLACEHOLDER*");
 		};
 
 		this.roll = function (message, args) {
 			if (_this.gameStarted) {
-				console.log('Roll command executed with ' + _this.betAmount);
+				console.log("Roll command executed with " + _this.betAmount);
 				var val = Math.floor(Math.random() * _this.betAmount) + 1;
-				_this.bot.reply(message, 'Rolled a ' + val + ' out of ' + _this.betAmount);
+				_this.bot.reply(message, "Rolled a " + val + " out of " + _this.betAmount);
 				_this.rolls[message.author.username] = val;
 			} else {
 				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
@@ -163,9 +159,9 @@ var GambleActions = function () {
 	}
 
 	_createClass(GambleActions, [{
-		key: 'isNormalInteger',
+		key: "isNormalInteger",
 		value: function isNormalInteger(str) {
-			return (/^\+?(0|[1-9]\d*)$/.test(str)
+			return (/^\+?([1-9]\d*)$/.test(str)
 			);
 		}
 	}]);
