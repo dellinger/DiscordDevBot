@@ -1,8 +1,6 @@
 require('dotenv').config();
-var later = require('later');
-export default class GambleActions {
 
-	
+export default class GambleActions {
 	
 	constructor(bot) {
 		this.bot = bot;
@@ -22,7 +20,6 @@ export default class GambleActions {
 			}
 			console.log(`Bet Amount: ${this.betAmount}`);
 		}
-		var sched = {schedules: [{s: [5]}]}; // 1 minute for now (hard coded)
 		setTimeout(()=> {
 			console.log("Game has ended");
 			this.gameStarted = false;

@@ -1,7 +1,7 @@
 require('dotenv').config();
 var Discord = require("discord.js");
 
-export default class DiscordBot {
+export class DiscordBot {
 
     supportedActions = {};
 
