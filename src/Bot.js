@@ -12,6 +12,7 @@ export default class DiscordBot {
         this.supportedActions["!help"] = this.listCommands;
         this.supportedActions["!listChannels"] = this.basicActions.listChannels;
         this.supportedActions["!ping"] = this.basicActions.pong;
+		this.supportedActions["!gamble"] = this.gambleActions.initiateGame;
         this.supportedActions["!roll"] = this.gambleActions.roll;
     };
 

@@ -1,23 +1,51 @@
 require('dotenv').config();
-
+var later = require('later');
 export default class GambleActions {
 
+	
+	
 	constructor(bot) {
 		this.bot = bot;
+		this.gameStarted = false;
+		this.rolls = {}; // key: userid / amount rolled
+		this.betAmount = 0;
 	}
 
-	roll = (message, args) => {
-		//  break apart message
-		
-		let rollAmount = args;
-		if(this.isNormalInteger(rollAmount)) {
-			rollAmount = parseInt(rollAmount);
-		} else {
-			rollAmount = 5000; // Arbitrary at this point
+	
+	initiateGame = (message, args) => {
+		if(args) {
+			if(this.isNormalInteger(args)){
+				this.betAmount = parseInt(args);
+				this.gameStarted = true;
+			} else {
+				console.log(`Need to enter a bet amount as an argument to initiate game`);
+			}
+			console.log(`Bet Amount: ${this.betAmount}`);
 		}
-		console.log(`Roll command executed with ${rollAmount}`);
-		let val = Math.floor(Math.random() * rollAmount) + 1;
-		this.bot.reply(message,`Rolled a ${val} out of ${rollAmount}`);
+		var sched = {schedules: [{s: [5]}]}; // 1 minute for now (hard coded)
+		setTimeout(()=> {
+			console.log("Game has ended");
+			this.gameStarted = false;
+			this.bot.sendMessage(`Time is up!`);
+			this.calculateWinner(message);
+		}, 5000)
+	};
+	
+	calculateWinner = (message) => {
+		this.bot.sendMessage(message.channel,`Congratulations! You are the winner! *PLACEHOLDER*`);
+	};
+	
+	
+	roll = (message, args) => {
+		if(this.gameStarted) {
+			console.log(`Roll command executed with ${this.betAmount}`);
+			let val = Math.floor(Math.random() * this.betAmount) + 1;
+			this.bot.reply(message,`Rolled a ${val} out of ${this.betAmount}`);
+			this.rolls[message.author.username] = val;
+		} else {
+			this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
+		}
+		
 	};
 
 	isNormalInteger(str) {

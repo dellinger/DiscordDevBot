@@ -98,6 +98,7 @@ var DiscordBot = function DiscordBot() {
     this.supportedActions["!help"] = this.listCommands;
     this.supportedActions["!listChannels"] = this.basicActions.listChannels;
     this.supportedActions["!ping"] = this.basicActions.pong;
+    this.supportedActions["!gamble"] = this.gambleActions.initiateGame;
     this.supportedActions["!roll"] = this.gambleActions.roll;
 };
 
@@ -113,6 +114,7 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 require('dotenv').config();
+var later = require('later');
 
 var GambleActions = function () {
 	function GambleActions(bot) {
@@ -120,21 +122,44 @@ var GambleActions = function () {
 
 		_classCallCheck(this, GambleActions);
 
-		this.roll = function (message, args) {
-			//  break apart message
-
-			var rollAmount = args;
-			if (_this.isNormalInteger(rollAmount)) {
-				rollAmount = parseInt(rollAmount);
-			} else {
-				rollAmount = 5000; // Arbitrary at this point
+		this.initiateGame = function (message, args) {
+			if (args) {
+				if (_this.isNormalInteger(args)) {
+					_this.betAmount = parseInt(args);
+					_this.gameStarted = true;
+				} else {
+					console.log('Need to enter a bet amount as an argument to initiate game');
+				}
+				console.log('Bet Amount: ' + _this.betAmount);
 			}
-			console.log('Roll command executed with ' + rollAmount);
-			var val = Math.floor(Math.random() * rollAmount) + 1;
-			_this.bot.reply(message, 'Rolled a ' + val + ' out of ' + rollAmount);
+			var sched = { schedules: [{ s: [5] }] }; // 1 minute for now (hard coded)
+			setTimeout(function () {
+				console.log("Game has ended");
+				_this.gameStarted = false;
+				_this.bot.sendMessage('Time is up!');
+				_this.calculateWinner(message);
+			}, 5000);
+		};
+
+		this.calculateWinner = function (message) {
+			_this.bot.sendMessage(message.channel, 'Congratulations! You are the winner! *PLACEHOLDER*');
+		};
+
+		this.roll = function (message, args) {
+			if (_this.gameStarted) {
+				console.log('Roll command executed with ' + _this.betAmount);
+				var val = Math.floor(Math.random() * _this.betAmount) + 1;
+				_this.bot.reply(message, 'Rolled a ' + val + ' out of ' + _this.betAmount);
+				_this.rolls[message.author.username] = val;
+			} else {
+				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
+			}
 		};
 
 		this.bot = bot;
+		this.gameStarted = false;
+		this.rolls = {}; // key: userid / amount rolled
+		this.betAmount = 0;
 	}
 
 	_createClass(GambleActions, [{

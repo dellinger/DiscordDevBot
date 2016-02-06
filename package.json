@@ -19,7 +19,8 @@
   "homepage": "https://github.com/dellinger/DiscordDevBot#readme",
   "dependencies": {
     "discord.js": "^6.0.0",
-    "dotenv": "^2.0.0"
+    "dotenv": "^2.0.0",
+    "later": "^1.2.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
