@@ -34,6 +34,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 require('dotenv').config();
@@ -63,10 +65,11 @@ var DiscordBot = function DiscordBot() {
         _this.bot.on("message", function (message) {
             var messageArray = message.cleanContent.split(" ");
             var potentialAction = messageArray[0];
+            var temp = messageArray.splice(1);
             console.log("Potential Action: " + potentialAction);
             if (_this.isSupportedAction(potentialAction)) {
                 var action = _this.supportedActions[potentialAction];
-                action(message);
+                action.apply(undefined, [message].concat(_toConsumableArray(temp)));
             }
         });
     };
@@ -101,6 +104,8 @@ var DiscordBot = function DiscordBot() {
 exports.default = DiscordBot;
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
@@ -109,20 +114,39 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 require('dotenv').config();
 
-var GambleActions = function GambleActions(bot) {
-	var _this = this;
+var GambleActions = function () {
+	function GambleActions(bot) {
+		var _this = this;
 
-	_classCallCheck(this, GambleActions);
+		_classCallCheck(this, GambleActions);
 
-	this.roll = function (message) {
-		//  break apart message
-		console.log(message);
-		var val = Math.floor(Math.random() * 10) + 1;
-		_this.bot.reply(message, 'Rolled a ' + val);
-	};
+		this.roll = function (message, args) {
+			//  break apart message
 
-	this.bot = bot;
-};
+			var rollAmount = args;
+			if (_this.isNormalInteger(rollAmount)) {
+				rollAmount = parseInt(rollAmount);
+			} else {
+				rollAmount = 5000; // Arbitrary at this point
+			}
+			console.log('Roll command executed with ' + rollAmount);
+			var val = Math.floor(Math.random() * rollAmount) + 1;
+			_this.bot.reply(message, 'Rolled a ' + val + ' out of ' + rollAmount);
+		};
+
+		this.bot = bot;
+	}
+
+	_createClass(GambleActions, [{
+		key: 'isNormalInteger',
+		value: function isNormalInteger(str) {
+			return (/^\+?(0|[1-9]\d*)$/.test(str)
+			);
+		}
+	}]);
+
+	return GambleActions;
+}();
 
 exports.default = GambleActions;
 "use strict";

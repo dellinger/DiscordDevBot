@@ -11,16 +11,11 @@ var nodemonOptions = {
 	env: { 'NODE_ENV': 'development' },
 	verbose: true,
 	ignore: ['node_modules/**'],
-	tasks: ['babel','copy'],
 	watch: ['src/*'],
-	callback: function (nodemon) {
-		nodemon.on('log', function (event) {
-			console.log(event.colour);
-		});
-	}
+	nodeArgs: ['--debug']
 };
 
-gulp.task("default", ["babel","copy","start"]);
+gulp.task("default", ["babel","copy"]);
 
 gulp.task("babel", function() {
   return gulp.src("src/**/*.js")
@@ -37,8 +32,6 @@ gulp.task("copy", function() {
 
 gulp.task('start', function () {
 	nodemon(nodemonOptions)
-		.on('restart', function () {
-			console.log('restarted!')
-		});
+		.on('restart',['default']);
 });
 
