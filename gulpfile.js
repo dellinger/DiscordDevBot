@@ -2,8 +2,9 @@ var gulp = require("gulp");
 var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
 var concat = require("gulp-concat");
-var exec = require('child_process').exec;
+var mocha = require("gulp-mocha");
 var nodemon = require('gulp-nodemon');
+require('babel-register');
 
 var nodemonOptions = {
 	script: 'dist/all.js',
@@ -16,6 +17,7 @@ var nodemonOptions = {
 };
 
 gulp.task("default", ["babel","copy"]);
+gulp.task("continuous_integration", ["default", "test"]);
 
 gulp.task("babel", function() {
   return gulp.src("src/**/*.js")
@@ -34,4 +36,10 @@ gulp.task('start', function () {
 	nodemon(nodemonOptions)
 		.on('restart',['default']);
 });
+
+gulp.task('test', function() {
+	return gulp.src('tests/**/*.js', {read : false})
+		.pipe(mocha({reporter:'spec'}));
+});
+
 
