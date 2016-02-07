@@ -120,25 +120,49 @@ var GambleActions = function () {
 		_classCallCheck(this, GambleActions);
 
 		this.initiateGame = function (message, args) {
+
+			console.log("Args: " + args);
 			if (args) {
 				if (_this.isNormalInteger(args)) {
 					_this.betAmount = parseInt(args);
 					_this.gameStarted = true;
+					console.log("Gambling has started");
+					_this.bot.sendMessage("------ Gambling has started ------\n------ Bet is at " + _this.betAmount + " ------");
 				} else {
 					console.log("Need to enter a bet amount as an argument to initiate game");
 				}
 				console.log("Bet Amount: " + _this.betAmount);
+			} else {
+				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
 			}
 			setTimeout(function () {
 				console.log("Game has ended");
 				_this.gameStarted = false;
 				_this.bot.sendMessage("Time is up!");
 				_this.calculateWinner(message);
-			}, 5000);
+			}, 60000 * _this.gameLength);
 		};
 
 		this.calculateWinner = function (message) {
-			_this.bot.sendMessage(message.channel, "Congratulations! You are the winner! *PLACEHOLDER*");
+
+			var highestRoll = 0; //user / roll
+			var highestUser = undefined;
+			var lowestRoll = _this.betAmount; // start high to get to lowest
+			var lowestUser = undefined;
+
+			Object.keys(_this.rolls).forEach(function (username) {
+				if (_this.rolls[username] > highestRoll) {
+					highestRoll = _this.rolls[username];
+					highestUser = username;
+				}
+				if (_this.rolls[username] < lowestRoll) {
+					lowestRoll = _this.rolls[username];
+					lowestUser = username;
+				}
+			});
+			if (highestUser && lowestUser) {
+				_this.bot.sendMessage(message.channel, lowestUser + " owes " + (highestRoll - lowestRoll) + " to " + highestUser);
+			}
 		};
 
 		this.roll = function (message, args) {
@@ -156,6 +180,7 @@ var GambleActions = function () {
 		this.gameStarted = false;
 		this.rolls = {}; // key: userid / amount rolled
 		this.betAmount = 0;
+		this.gameLength = 3; // in minutes
 	}
 
 	_createClass(GambleActions, [{
