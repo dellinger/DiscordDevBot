@@ -11,19 +11,16 @@ export default class GambleActions {
 	}
 
 	
-	initiateGame = (message, args) => {
+	initiateGame = (message, ...args) => {
 
 		console.log(`Args: ${args}`);
 		if(args) {
-			if(this.isNormalInteger(args)){
-				this.betAmount = parseInt(args);
-				this.gameStarted = true;
-				console.log(`Gambling has started`);
-				this.bot.sendMessage(message.channel,`------ Gambling has started ------`)
-				this.bot.sendMessage(message.channel,`------ Bet is at ${this.betAmount} ------`);
-			} else {
-				console.log(`Need to enter a bet amount as an argument to initiate game`);
-			}
+			this.parseBet(args[0]);
+			this.parseGameLength(args[1]);
+			this.gameStarted = true;
+			this.bot.sendMessage(message.channel,`------ Gambling has started ------`)
+			this.bot.sendMessage(message.channel,`------ Bet is at ${this.betAmount} ------`);
+			this.bot.sendMessage(message.channel,`------ Game will end in ${this.gameLength} minutes ------`);
 			console.log(`Bet Amount: ${this.betAmount}`);
 		} else {
 			this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
@@ -72,6 +69,21 @@ export default class GambleActions {
 		}
 		
 	};
+
+	parseGameLength(num) {
+		if(num && num > 0 && num < 120) {
+			this.gameLength = num;
+		} else {
+			this.gameLength = 5;
+		}
+		console.log(`Game Length is ${this.gameLength} minutes`);
+	}
+
+	parseBet(num) {
+		if(this.isNormalInteger(num)){
+			this.betAmount = parseInt(num);
+		}
+	}
 
 	isNormalInteger(str) {
 		return /^\+?([1-9]\d*)$/.test(str);

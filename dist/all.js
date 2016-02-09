@@ -63,9 +63,11 @@ var DiscordBot = exports.DiscordBot = function DiscordBot() {
         });
 
         _this.bot.on("message", function (message) {
+            console.log("Message: " + message.cleanContent);
             var messageArray = message.cleanContent.split(" ");
             var potentialAction = messageArray[0];
-            var temp = messageArray.splice(1);
+            var temp = messageArray.splice(1, messageArray.length);
+            console.log("Temp: " + temp);
             console.log("Potential Action: " + potentialAction);
             if (_this.isSupportedAction(potentialAction)) {
                 var action = _this.supportedActions[potentialAction];
@@ -119,19 +121,19 @@ var GambleActions = function () {
 
 		_classCallCheck(this, GambleActions);
 
-		this.initiateGame = function (message, args) {
+		this.initiateGame = function (message) {
+			for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				args[_key - 1] = arguments[_key];
+			}
 
 			console.log("Args: " + args);
 			if (args) {
-				if (_this.isNormalInteger(args)) {
-					_this.betAmount = parseInt(args);
-					_this.gameStarted = true;
-					console.log("Gambling has started");
-					_this.bot.sendMessage(message.channel, "------ Gambling has started ------");
-					_this.bot.sendMessage(message.channel, "------ Bet is at " + _this.betAmount + " ------");
-				} else {
-					console.log("Need to enter a bet amount as an argument to initiate game");
-				}
+				_this.parseBet(args[0]);
+				_this.parseGameLength(args[1]);
+				_this.gameStarted = true;
+				_this.bot.sendMessage(message.channel, "------ Gambling has started ------");
+				_this.bot.sendMessage(message.channel, "------ Bet is at " + _this.betAmount + " ------");
+				_this.bot.sendMessage(message.channel, "------ Game will end in " + _this.gameLength + " minutes ------");
 				console.log("Bet Amount: " + _this.betAmount);
 			} else {
 				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
@@ -185,6 +187,23 @@ var GambleActions = function () {
 	}
 
 	_createClass(GambleActions, [{
+		key: "parseGameLength",
+		value: function parseGameLength(num) {
+			if (num && num > 0 && num < 120) {
+				this.gameLength = num;
+			} else {
+				this.gameLength = 5;
+			}
+			console.log("Game Length is " + this.gameLength + " minutes");
+		}
+	}, {
+		key: "parseBet",
+		value: function parseBet(num) {
+			if (this.isNormalInteger(num)) {
+				this.betAmount = parseInt(num);
+			}
+		}
+	}, {
 		key: "isNormalInteger",
 		value: function isNormalInteger(str) {
 			return (/^\+?([1-9]\d*)$/.test(str)

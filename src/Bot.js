@@ -31,9 +31,11 @@ export class DiscordBot {
         });
 
         this.bot.on("message", message => {
+            console.log(`Message: ${message.cleanContent}`);
 			let messageArray = message.cleanContent.split(" ");
             let potentialAction = messageArray[0];
-			let temp = messageArray.splice(1);
+			let temp = messageArray.splice(1, messageArray.length);
+            console.log(`Temp: ${temp}`);
             console.log(`Potential Action: ${potentialAction}`);
             if(this.isSupportedAction(potentialAction)) {
                 let action = this.supportedActions[potentialAction];
