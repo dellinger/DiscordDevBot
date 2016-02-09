@@ -127,7 +127,8 @@ var GambleActions = function () {
 					_this.betAmount = parseInt(args);
 					_this.gameStarted = true;
 					console.log("Gambling has started");
-					_this.bot.sendMessage("------ Gambling has started ------\n------ Bet is at " + _this.betAmount + " ------");
+					_this.bot.sendMessage(message.channel, "------ Gambling has started ------");
+					_this.bot.sendMessage(message.channel, "------ Bet is at " + _this.betAmount + " ------");
 				} else {
 					console.log("Need to enter a bet amount as an argument to initiate game");
 				}
@@ -138,7 +139,7 @@ var GambleActions = function () {
 			setTimeout(function () {
 				console.log("Game has ended");
 				_this.gameStarted = false;
-				_this.bot.sendMessage("Time is up!");
+				_this.bot.sendMessage(message.channel, "Time is up!");
 				_this.calculateWinner(message);
 			}, 60000 * _this.gameLength);
 		};

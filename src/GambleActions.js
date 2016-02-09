@@ -19,7 +19,8 @@ export default class GambleActions {
 				this.betAmount = parseInt(args);
 				this.gameStarted = true;
 				console.log(`Gambling has started`);
-				this.bot.sendMessage(`------ Gambling has started ------\n------ Bet is at ${this.betAmount} ------`);
+				this.bot.sendMessage(message.channel,`------ Gambling has started ------`)
+				this.bot.sendMessage(message.channel,`------ Bet is at ${this.betAmount} ------`);
 			} else {
 				console.log(`Need to enter a bet amount as an argument to initiate game`);
 			}
@@ -30,7 +31,7 @@ export default class GambleActions {
 		setTimeout(()=> {
 			console.log("Game has ended");
 			this.gameStarted = false;
-			this.bot.sendMessage(`Time is up!`);
+			this.bot.sendMessage(message.channel,`Time is up!`);
 			this.calculateWinner(message);
 		}, 60000 * this.gameLength)
 	};
