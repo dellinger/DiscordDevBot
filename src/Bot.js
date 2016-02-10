@@ -13,6 +13,8 @@ export class DiscordBot {
         this.supportedActions["!listChannels"] = this.basicActions.listChannels;
         this.supportedActions["!ping"] = this.basicActions.pong;
 		this.supportedActions["!gamble"] = this.gambleActions.initiateGame;
+        this.supportedActions["!1"] = this.gambleActions.register;
+        this.supportedActions["!register"] = this.gambleActions.register;
         this.supportedActions["!roll"] = this.gambleActions.roll;
     };
 
@@ -38,6 +40,7 @@ export class DiscordBot {
             console.log(`Temp: ${temp}`);
             console.log(`Potential Action: ${potentialAction}`);
             if(this.isSupportedAction(potentialAction)) {
+                console.log(`${potentialAction} supported!`);
                 let action = this.supportedActions[potentialAction];
                 action(message,...temp);
             }

@@ -70,6 +70,7 @@ var DiscordBot = exports.DiscordBot = function DiscordBot() {
             console.log("Temp: " + temp);
             console.log("Potential Action: " + potentialAction);
             if (_this.isSupportedAction(potentialAction)) {
+                console.log(potentialAction + " supported!");
                 var action = _this.supportedActions[potentialAction];
                 action.apply(undefined, [message].concat(_toConsumableArray(temp)));
             }
@@ -101,6 +102,8 @@ var DiscordBot = exports.DiscordBot = function DiscordBot() {
     this.supportedActions["!listChannels"] = this.basicActions.listChannels;
     this.supportedActions["!ping"] = this.basicActions.pong;
     this.supportedActions["!gamble"] = this.gambleActions.initiateGame;
+    this.supportedActions["!1"] = this.gambleActions.register;
+    this.supportedActions["!register"] = this.gambleActions.register;
     this.supportedActions["!roll"] = this.gambleActions.roll;
 };
 "use strict";
@@ -131,49 +134,59 @@ var GambleActions = function () {
 				_this.parseBet(args[0]);
 				_this.parseGameLength(args[1]);
 				_this.gameStarted = true;
-				_this.bot.sendMessage(message.channel, "------ Gambling has started ------");
-				_this.bot.sendMessage(message.channel, "------ Bet is at " + _this.betAmount + " ------");
-				_this.bot.sendMessage(message.channel, "------ Game will end in " + _this.gameLength + " minutes ------");
+				_this.bot.sendMessage(message.channel, "------ Gambling has started ------\n\n\t\t\t\t\t\t\t\t\t\t\t\t------ Bet is at " + _this.betAmount + " ------\n\n\t\t\t\t\t\t\t\t\t\t\t\t------ Registration ends in 3 minutes. Type !1 to enter.");
+				_this.registrationOpen = true;
+				//this.bot.sendMessage(message.channel,`------ Game will end in ${this.gameLength} minutes ------`);
 				console.log("Bet Amount: " + _this.betAmount);
 			} else {
-				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
+				_this.bot.reply(message, "Gambling has not started. Use command !gamble *amount* *gamelengthInMins* ```!gamble [0-999999] [1-120]```");
 			}
 			setTimeout(function () {
-				console.log("Game has ended");
-				_this.gameStarted = false;
-				_this.bot.sendMessage(message.channel, "Time is up!");
-				_this.calculateWinner(message);
-			}, 60000 * _this.gameLength);
+				_this.bot.sendMessage(message.channel, "------ Registration has ended ------\n\t\t\t\t\t\t\t\t\t\t\t\t\tThe following players press !1  to roll");
+				_this.bot.sendMessage(message.channel, Object.keys(_this.rolls));
+				_this.registrationOpen = false;
+				setTimeout(function () {
+					_this.gameStarted = false;
+					_this.bot.sendMessage(message.channel, "Time is up!");
+					_this.calculateWinner(message);
+				}, 60000 * _this.gameLength);
+			}, 60000 * _this.registrationLength);
 		};
 
 		this.calculateWinner = function (message) {
+			var min = Infinity,
+			    max = -Infinity;
 
-			var highestRoll = 0; //user / roll
-			var highestUser = undefined;
-			var lowestRoll = _this.betAmount; // start high to get to lowest
-			var lowestUser = undefined;
+			for (var user in _this.rolls) {
+				if (_this.rolls[user] < min) {
+					min = user;
+				}
+				if (_this.rolls[user] > max) {
+					max = user;
+				}
+			}
+			_this.bot.sendMessage(message.channel, min + " owes " + (_this.rolls[max] - _this.rolls[min]) + " to " + max);
+		};
 
-			Object.keys(_this.rolls).forEach(function (username) {
-				if (_this.rolls[username] > highestRoll) {
-					highestRoll = _this.rolls[username];
-					highestUser = username;
-				}
-				if (_this.rolls[username] < lowestRoll) {
-					lowestRoll = _this.rolls[username];
-					lowestUser = username;
-				}
-			});
-			if (highestUser && lowestUser) {
-				_this.bot.sendMessage(message.channel, lowestUser + " owes " + (highestRoll - lowestRoll) + " to " + highestUser);
+		this.register = function (message, args) {
+			if (_this.registrationOpen) {
+				_this.rolls[message.author.username] = null;
+				_this.bot.reply(message.channel, message.author.username + " is registered.");
+			} else {
+				_this.bot.reply(message.channel, "Registration is not open. Sorry.");
 			}
 		};
 
 		this.roll = function (message, args) {
 			if (_this.gameStarted) {
-				console.log("Roll command executed with " + _this.betAmount);
-				var val = Math.floor(Math.random() * _this.betAmount) + 1;
-				_this.bot.reply(message, "Rolled a " + val + " out of " + _this.betAmount);
-				_this.rolls[message.author.username] = val;
+				if (_this.registrationOpen) {
+					_this.bot.reply(message, "Please wait until registration finishes until performing a roll");
+				} else {
+					console.log("Roll command executed with " + _this.betAmount);
+					var val = Math.floor(Math.random() * _this.betAmount) + 1;
+					_this.bot.reply(message, "Rolled a " + val + " out of " + _this.betAmount);
+					_this.rolls[message.author.username] = val;
+				}
 			} else {
 				_this.bot.reply(message, "Gambling has not started. Use command ```!gamble [0-999999]```");
 			}
@@ -181,9 +194,11 @@ var GambleActions = function () {
 
 		this.bot = bot;
 		this.gameStarted = false;
+		this.registrationOpen = false;
 		this.rolls = {}; // key: userid / amount rolled
 		this.betAmount = 0;
 		this.gameLength = 3; // in minutes
+		this.registrationLength = 1; // in minutes
 	}
 
 	_createClass(GambleActions, [{
